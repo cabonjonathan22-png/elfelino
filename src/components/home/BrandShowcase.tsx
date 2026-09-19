@@ -16,8 +16,8 @@ const BRAND_SWATCH: Record<string, number> = {
   tbe: 5,
 };
 
-export function BrandShowcase() {
-  const brands = getBrands();
+export async function BrandShowcase() {
+  const brands = await getBrands();
 
   return (
     <section className="py-20 sm:py-28">

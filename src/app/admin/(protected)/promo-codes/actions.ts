@@ -13,12 +13,12 @@ export async function savePromoCodeAction(formData: FormData): Promise<void> {
     description: String(formData.get("description") || ""),
   };
   if (!promo.code) return;
-  savePromoCode(promo, previousCode || undefined);
+  await savePromoCode(promo, previousCode || undefined);
   revalidatePath("/", "layout");
 }
 
 export async function deletePromoCodeAction(formData: FormData): Promise<void> {
   const code = String(formData.get("previousCode") || formData.get("code") || "");
-  deletePromoCode(code);
+  await deletePromoCode(code);
   revalidatePath("/", "layout");
 }

@@ -11,8 +11,10 @@ interface EditProductPageProps {
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const { id } = await params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
   if (!product) notFound();
+
+  const brands = await getBrands();
 
   return (
     <div className="space-y-6">
@@ -20,7 +22,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         <h1 className="text-xl font-medium">{product.name}</h1>
         <p className="mt-1 text-sm text-ash">Modifier ce produit.</p>
       </div>
-      <ProductForm product={product} brands={getBrands()} />
+      <ProductForm product={product} brands={brands} />
     </div>
   );
 }

@@ -38,8 +38,8 @@ const BRAND_SWATCH: Record<string, number> = {
   tbe: 4,
 };
 
-export default function TheHousePage() {
-  const brands = getBrands();
+export default async function TheHousePage() {
+  const brands = await getBrands();
 
   return (
     <>

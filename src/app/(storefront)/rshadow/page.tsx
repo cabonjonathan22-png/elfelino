@@ -6,12 +6,12 @@ import { BrandStory } from "@/components/brand/BrandStory";
 import { BrandCollectionPreview } from "@/components/brand/BrandCollectionPreview";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const brand = getBrand("rshadow");
+  const brand = await getBrand("rshadow");
   return { title: brand?.name, description: brand?.description };
 }
 
-export default function RShadowPage() {
-  const brand = getBrand("rshadow");
+export default async function RShadowPage() {
+  const brand = await getBrand("rshadow");
   if (!brand) notFound();
 
   return (

@@ -9,7 +9,7 @@ export async function loginAction(formData: FormData): Promise<void> {
   const code = String(formData.get("code") || "").trim();
   const next = String(formData.get("next") || "/admin");
 
-  const accessCode = validateAccessCode(code);
+  const accessCode = await validateAccessCode(code);
   if (!accessCode) {
     redirect(`/admin/login?error=1&next=${encodeURIComponent(next)}`);
   }

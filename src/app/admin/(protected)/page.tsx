@@ -6,9 +6,8 @@ import { ORDER_STATUS_LABELS } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Tableau de bord" };
 
-export default function AdminDashboardPage() {
-  const products = getProducts();
-  const orders = getOrders();
+export default async function AdminDashboardPage() {
+  const [products, orders] = await Promise.all([getProducts(), getOrders()]);
 
   const totalUnits = products.reduce((sum, p) => sum + totalStock(p), 0);
   const lowStock = products.filter((p) => {

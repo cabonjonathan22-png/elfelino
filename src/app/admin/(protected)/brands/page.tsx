@@ -4,8 +4,8 @@ import { getBrands } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Marques" };
 
-export default function AdminBrandsPage() {
-  const brands = getBrands();
+export default async function AdminBrandsPage() {
+  const brands = await getBrands();
 
   return (
     <div className="space-y-6">

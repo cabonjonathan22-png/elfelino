@@ -6,12 +6,12 @@ import { BrandStory } from "@/components/brand/BrandStory";
 import { BrandCollectionPreview } from "@/components/brand/BrandCollectionPreview";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const brand = getBrand("tbe");
+  const brand = await getBrand("tbe");
   return { title: brand?.name, description: brand?.description };
 }
 
-export default function TbePage() {
-  const brand = getBrand("tbe");
+export default async function TbePage() {
+  const brand = await getBrand("tbe");
   if (!brand) notFound();
 
   return (

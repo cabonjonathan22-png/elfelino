@@ -4,8 +4,8 @@ import { createAccessCodeAction, revokeAccessCodeAction } from "@/app/admin/(pro
 
 export const metadata: Metadata = { title: "Codes d'accès" };
 
-export default function AdminAccessCodesPage() {
-  const codes = getAccessCodes();
+export default async function AdminAccessCodesPage() {
+  const codes = await getAccessCodes();
 
   return (
     <div className="max-w-2xl space-y-8">

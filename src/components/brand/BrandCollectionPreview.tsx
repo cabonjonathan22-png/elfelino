@@ -5,8 +5,8 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
 
-export function BrandCollectionPreview({ brand }: { brand: Brand }) {
-  const products = getProductsByBrand(brand.slug).slice(0, 8);
+export async function BrandCollectionPreview({ brand }: { brand: Brand }) {
+  const products = (await getProductsByBrand(brand.slug)).slice(0, 8);
 
   return (
     <section className="border-t border-line bg-smoke py-20 sm:py-28">

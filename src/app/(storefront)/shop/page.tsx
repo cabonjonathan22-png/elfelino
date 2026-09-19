@@ -10,9 +10,8 @@ export const metadata: Metadata = {
   description: "La boutique MAISON — El Felino, RShadow et TBE. Filtrez par marque et par catégorie.",
 };
 
-export default function ShopPage() {
-  const products = getProducts();
-  const brands = getBrands();
+export default async function ShopPage() {
+  const [products, brands] = await Promise.all([getProducts(), getBrands()]);
 
   return (
     <div className="py-14 sm:py-20">

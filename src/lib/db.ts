@@ -1,16 +1,16 @@
-import fs from "node:fs";
-import path from "node:path";
+import { get, put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 import type { AccessCode, Brand, Order, OrderStatus, PromoCode, Product, ShippingMethod } from "@/lib/types";
 import { PRODUCTS as SEED_PRODUCTS } from "@/data/products";
 import { BRANDS as SEED_BRANDS } from "@/data/brands";
 import { PROMO_CODES as SEED_PROMO_CODES, SHIPPING_METHODS as SEED_SHIPPING_METHODS } from "@/data/commerce";
 
-// File-backed store standing in for a real database. Every admin
-// mutation and every customer order is written here so the storefront
-// and the admin space share one source of truth and survive restarts.
+// Vercel Blob-backed store standing in for a real database. Serverless
+// functions don't share a writable local filesystem across invocations,
+// so the storefront and the admin space both read/write this single JSON
+// blob as their shared source of truth.
 
-const DB_PATH = path.join(process.cwd(), "data", "db.json");
+const BLOB_PATHNAME = "maison/db.json";
 
 interface DbShape {
   products: Product[];
@@ -41,20 +41,27 @@ function seedDb(): DbShape {
   };
 }
 
-function writeDb(data: DbShape): void {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+async function writeDb(data: DbShape): Promise<void> {
+  await put(BLOB_PATHNAME, JSON.stringify(data, null, 2), {
+    access: "private",
+    contentType: "application/json",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+  });
 }
 
-function readDb(): DbShape {
-  if (!fs.existsSync(DB_PATH)) {
+async function readDb(): Promise<DbShape> {
+  const result = await get(BLOB_PATHNAME, { access: "private", useCache: false }).catch(() => null);
+
+  if (!result) {
     const seeded = seedDb();
-    writeDb(seeded);
+    await writeDb(seeded);
     return seeded;
   }
-  const raw = fs.readFileSync(DB_PATH, "utf-8");
+
+  const raw = await new Response(result.stream).text();
   const parsed = JSON.parse(raw) as Partial<DbShape>;
-  // Defensive defaults in case the file predates a field being added.
+  // Defensive defaults in case the blob predates a field being added.
   return {
     products: parsed.products ?? SEED_PRODUCTS,
     brands: parsed.brands ?? SEED_BRANDS,
@@ -67,103 +74,103 @@ function readDb(): DbShape {
 
 // ---------------------------------------------------------------- Products
 
-export function getProducts(): Product[] {
-  return readDb().products;
+export async function getProducts(): Promise<Product[]> {
+  return (await readDb()).products;
 }
 
-export function getProduct(slug: string): Product | undefined {
-  return readDb().products.find((p) => p.slug === slug);
+export async function getProduct(slug: string): Promise<Product | undefined> {
+  return (await readDb()).products.find((p) => p.slug === slug);
 }
 
-export function getProductById(id: string): Product | undefined {
-  return readDb().products.find((p) => p.id === id);
+export async function getProductById(id: string): Promise<Product | undefined> {
+  return (await readDb()).products.find((p) => p.id === id);
 }
 
-export function getProductsByBrand(brand: string): Product[] {
-  return readDb().products.filter((p) => p.brand === brand);
+export async function getProductsByBrand(brand: string): Promise<Product[]> {
+  return (await readDb()).products.filter((p) => p.brand === brand);
 }
 
-export function getNewProducts(limit = 4): Product[] {
-  return readDb().products.filter((p) => p.isNew).slice(0, limit);
+export async function getNewProducts(limit = 4): Promise<Product[]> {
+  return (await readDb()).products.filter((p) => p.isNew).slice(0, limit);
 }
 
-export function getLimitedProducts(limit = 4): Product[] {
-  return readDb().products.filter((p) => p.isLimited).slice(0, limit);
+export async function getLimitedProducts(limit = 4): Promise<Product[]> {
+  return (await readDb()).products.filter((p) => p.isLimited).slice(0, limit);
 }
 
-export function saveProduct(product: Product): void {
-  const db = readDb();
+export async function saveProduct(product: Product): Promise<void> {
+  const db = await readDb();
   const idx = db.products.findIndex((p) => p.id === product.id);
   if (idx >= 0) db.products[idx] = product;
   else db.products.push(product);
-  writeDb(db);
+  await writeDb(db);
 }
 
-export function deleteProduct(id: string): void {
-  const db = readDb();
+export async function deleteProduct(id: string): Promise<void> {
+  const db = await readDb();
   db.products = db.products.filter((p) => p.id !== id);
-  writeDb(db);
+  await writeDb(db);
 }
 
 // ------------------------------------------------------------------ Brands
 
-export function getBrands(): Brand[] {
-  return readDb().brands;
+export async function getBrands(): Promise<Brand[]> {
+  return (await readDb()).brands;
 }
 
-export function getBrand(slug: string): Brand | undefined {
-  return readDb().brands.find((b) => b.slug === slug);
+export async function getBrand(slug: string): Promise<Brand | undefined> {
+  return (await readDb()).brands.find((b) => b.slug === slug);
 }
 
-export function saveBrand(brand: Brand): void {
-  const db = readDb();
+export async function saveBrand(brand: Brand): Promise<void> {
+  const db = await readDb();
   const idx = db.brands.findIndex((b) => b.slug === brand.slug);
   if (idx >= 0) db.brands[idx] = brand;
-  writeDb(db);
+  await writeDb(db);
 }
 
 // ------------------------------------------------------------- Promo codes
 
-export function getPromoCodes(): PromoCode[] {
-  return readDb().promoCodes;
+export async function getPromoCodes(): Promise<PromoCode[]> {
+  return (await readDb()).promoCodes;
 }
 
-export function getPromoCode(code: string): PromoCode | undefined {
-  return readDb().promoCodes.find((p) => p.code === code.trim().toUpperCase());
+export async function getPromoCode(code: string): Promise<PromoCode | undefined> {
+  return (await readDb()).promoCodes.find((p) => p.code === code.trim().toUpperCase());
 }
 
-export function savePromoCode(promo: PromoCode, previousCode?: string): void {
-  const db = readDb();
+export async function savePromoCode(promo: PromoCode, previousCode?: string): Promise<void> {
+  const db = await readDb();
   const idx = db.promoCodes.findIndex((p) => p.code === (previousCode ?? promo.code));
   if (idx >= 0) db.promoCodes[idx] = promo;
   else db.promoCodes.push(promo);
-  writeDb(db);
+  await writeDb(db);
 }
 
-export function deletePromoCode(code: string): void {
-  const db = readDb();
+export async function deletePromoCode(code: string): Promise<void> {
+  const db = await readDb();
   db.promoCodes = db.promoCodes.filter((p) => p.code !== code);
-  writeDb(db);
+  await writeDb(db);
 }
 
 // -------------------------------------------------------------- Shipping
 
-export function getShippingMethods(): ShippingMethod[] {
-  return readDb().shippingMethods;
+export async function getShippingMethods(): Promise<ShippingMethod[]> {
+  return (await readDb()).shippingMethods;
 }
 
 // ---------------------------------------------------------------- Orders
 
-export function getOrders(): Order[] {
-  return [...readDb().orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+export async function getOrders(): Promise<Order[]> {
+  return [...(await readDb()).orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-export function getOrder(id: string): Order | undefined {
-  return readDb().orders.find((o) => o.id === id);
+export async function getOrder(id: string): Promise<Order | undefined> {
+  return (await readDb()).orders.find((o) => o.id === id);
 }
 
-export function createOrder(order: Order): void {
-  const db = readDb();
+export async function createOrder(order: Order): Promise<void> {
+  const db = await readDb();
 
   // Decrement stock for each purchased size so the admin stock view and
   // storefront availability reflect real orders as they come in.
@@ -174,34 +181,34 @@ export function createOrder(order: Order): void {
   }
 
   db.orders.push(order);
-  writeDb(db);
+  await writeDb(db);
 }
 
-export function updateOrderStatus(id: string, status: OrderStatus): void {
-  const db = readDb();
+export async function updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
+  const db = await readDb();
   const order = db.orders.find((o) => o.id === id);
   if (order) order.status = status;
-  writeDb(db);
+  await writeDb(db);
 }
 
 // ---------------------------------------------------------- Access codes
 
-export function getAccessCodes(): AccessCode[] {
-  return readDb().accessCodes;
+export async function getAccessCodes(): Promise<AccessCode[]> {
+  return (await readDb()).accessCodes;
 }
 
-export function getAccessCodeById(id: string): AccessCode | undefined {
-  return readDb().accessCodes.find((a) => a.id === id);
+export async function getAccessCodeById(id: string): Promise<AccessCode | undefined> {
+  return (await readDb()).accessCodes.find((a) => a.id === id);
 }
 
-export function validateAccessCode(code: string): AccessCode | undefined {
-  const db = readDb();
+export async function validateAccessCode(code: string): Promise<AccessCode | undefined> {
+  const db = await readDb();
   const found = db.accessCodes.find(
     (a) => a.code === code.trim().toUpperCase() && !a.revoked
   );
   if (found) {
     found.lastUsedAt = new Date().toISOString();
-    writeDb(db);
+    await writeDb(db);
   }
   return found;
 }
@@ -211,8 +218,8 @@ function generateAccessCode(): string {
   return `MAISON-${segment()}`;
 }
 
-export function createAccessCode(label: string): AccessCode {
-  const db = readDb();
+export async function createAccessCode(label: string): Promise<AccessCode> {
+  const db = await readDb();
   const accessCode: AccessCode = {
     id: randomUUID(),
     label: label.trim() || "Sans nom",
@@ -222,13 +229,13 @@ export function createAccessCode(label: string): AccessCode {
     revoked: false,
   };
   db.accessCodes.push(accessCode);
-  writeDb(db);
+  await writeDb(db);
   return accessCode;
 }
 
-export function revokeAccessCode(id: string): void {
-  const db = readDb();
+export async function revokeAccessCode(id: string): Promise<void> {
+  const db = await readDb();
   const found = db.accessCodes.find((a) => a.id === id);
   if (found) found.revoked = true;
-  writeDb(db);
+  await writeDb(db);
 }

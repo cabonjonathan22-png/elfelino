@@ -4,8 +4,8 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
 
-export function DropSection() {
-  const drops = getLimitedProducts(4);
+export async function DropSection() {
+  const drops = await getLimitedProducts(4);
 
   return (
     <section className="border-t border-line bg-smoke py-20 sm:py-28">

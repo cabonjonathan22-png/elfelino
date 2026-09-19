@@ -52,14 +52,14 @@ export async function saveProductAction(formData: FormData): Promise<void> {
     swatch: Number(formData.get("swatch")) || 1,
   };
 
-  saveProduct(product);
+  await saveProduct(product);
   revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
 export async function deleteProductAction(formData: FormData): Promise<void> {
   const id = String(formData.get("id") || "");
-  deleteProduct(id);
+  await deleteProduct(id);
   revalidatePath("/", "layout");
   redirect("/admin/products");
 }

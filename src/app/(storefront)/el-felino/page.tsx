@@ -6,12 +6,12 @@ import { BrandStory } from "@/components/brand/BrandStory";
 import { BrandCollectionPreview } from "@/components/brand/BrandCollectionPreview";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const brand = getBrand("el-felino");
+  const brand = await getBrand("el-felino");
   return { title: brand?.name, description: brand?.description };
 }
 
-export default function ElFelinoPage() {
-  const brand = getBrand("el-felino");
+export default async function ElFelinoPage() {
+  const brand = await getBrand("el-felino");
   if (!brand) notFound();
 
   return (

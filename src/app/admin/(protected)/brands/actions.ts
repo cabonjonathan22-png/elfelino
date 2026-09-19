@@ -32,6 +32,6 @@ export async function saveBrandAction(formData: FormData): Promise<void> {
     values: values.filter((v) => v.title.trim()),
   };
 
-  saveBrand(brand);
+  await saveBrand(brand);
   revalidatePath("/", "layout");
 }

@@ -6,8 +6,8 @@ import { ORDER_STATUS_LABELS } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Commandes" };
 
-export default function AdminOrdersPage() {
-  const orders = getOrders();
+export default async function AdminOrdersPage() {
+  const orders = await getOrders();
 
   return (
     <div className="space-y-6">

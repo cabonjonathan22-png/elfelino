@@ -11,7 +11,7 @@ interface EditBrandPageProps {
 
 export default async function EditBrandPage({ params }: EditBrandPageProps) {
   const { slug } = await params;
-  const brand = getBrand(slug);
+  const brand = await getBrand(slug);
   if (!brand) notFound();
 
   return (

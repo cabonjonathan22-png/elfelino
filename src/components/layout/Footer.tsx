@@ -9,8 +9,8 @@ const SOCIALS = [
   { label: "Pinterest", href: "https://pinterest.com" },
 ];
 
-export function Footer() {
-  const brands = getBrands();
+export async function Footer() {
+  const brands = await getBrands();
 
   return (
     <footer className="border-t border-line bg-white">

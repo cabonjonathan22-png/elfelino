@@ -14,12 +14,13 @@ interface ProductPageProps {
 }
 
 export async function generateStaticParams() {
-  return getProducts().map((p) => ({ slug: p.slug }));
+  const products = await getProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -29,13 +30,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) notFound();
 
-  const brand = getBrand(product.brand);
-  const related = getProductsByBrand(product.brand)
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
+  const [brand, brandProducts] = await Promise.all([
+    getBrand(product.brand),
+    getProductsByBrand(product.brand),
+  ]);
+  const related = brandProducts.filter((p) => p.id !== product.id).slice(0, 4);
   const stock = totalStock(product);
 
   return (

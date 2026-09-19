@@ -1,13 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getProducts, getBrand } from "@/lib/db";
+import { getProducts, getBrands } from "@/lib/db";
 import { totalStock, formatPrice } from "@/lib/utils";
 import { PRODUCT_CATEGORY_LABELS } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Produits" };
 
-export default function AdminProductsPage() {
-  const products = getProducts();
+export default async function AdminProductsPage() {
+  const [products, brands] = await Promise.all([getProducts(), getBrands()]);
+  const brandName = (slug: string) => brands.find((b) => b.slug === slug)?.name;
 
   return (
     <div className="space-y-6">
@@ -56,7 +57,7 @@ export default function AdminProductsPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-ash">{getBrand(product.brand)?.name}</td>
+                  <td className="px-4 py-3 text-ash">{brandName(product.brand)}</td>
                   <td className="px-4 py-3 text-ash">{PRODUCT_CATEGORY_LABELS[product.category]}</td>
                   <td className="px-4 py-3">{formatPrice(product.price)}</td>
                   <td className="px-4 py-3">

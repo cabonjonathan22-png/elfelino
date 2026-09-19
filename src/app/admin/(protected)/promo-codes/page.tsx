@@ -4,8 +4,8 @@ import { savePromoCodeAction, deletePromoCodeAction } from "@/app/admin/(protect
 
 export const metadata: Metadata = { title: "Codes Promo" };
 
-export default function AdminPromoCodesPage() {
-  const promoCodes = getPromoCodes();
+export default async function AdminPromoCodesPage() {
+  const promoCodes = await getPromoCodes();
 
   return (
     <div className="max-w-3xl space-y-8">

@@ -8,7 +8,7 @@ import { logoutAction } from "@/app/admin/login/actions";
 export default async function AdminProtectedLayout({ children }: LayoutProps<"/admin">) {
   const store = await cookies();
   const accessCodeId = await verifySessionToken(store.get(ADMIN_COOKIE_NAME)?.value);
-  const accessCode = accessCodeId ? getAccessCodeById(accessCodeId) : undefined;
+  const accessCode = accessCodeId ? await getAccessCodeById(accessCodeId) : undefined;
 
   return (
     <div className="flex min-h-screen">

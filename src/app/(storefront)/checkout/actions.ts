@@ -43,7 +43,7 @@ export async function placeOrderAction(input: PlaceOrderInput): Promise<{ id: st
     status: "pending",
   };
 
-  createOrder(order);
+  await createOrder(order);
   revalidatePath("/", "layout");
   revalidatePath("/admin/orders");
 
