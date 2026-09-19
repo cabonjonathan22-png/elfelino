@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getBrands } from "@/lib/db";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { CoverMedia } from "@/components/ui/CoverMedia";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
 
@@ -31,12 +31,14 @@ export async function BrandShowcase() {
               href={`/${brand.slug}`}
               className="group relative flex min-h-[480px] flex-col justify-end bg-white"
             >
-              <PlaceholderVisual
+              <CoverMedia
+                image={brand.coverImage}
                 tone={BRAND_TONE[brand.slug]}
                 swatch={BRAND_SWATCH[brand.slug]}
                 monogram={brand.shortName[0]}
                 ratio="portrait"
                 className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, 33vw"
               />
               <div
                 className={`relative z-10 p-8 ${

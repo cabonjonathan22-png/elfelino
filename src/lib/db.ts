@@ -1,6 +1,6 @@
 import { get, put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
-import type { AccessCode, Brand, Order, OrderStatus, PromoCode, Product, ShippingMethod } from "@/lib/types";
+import type { AccessCode, Brand, HomeContent, Order, OrderStatus, PromoCode, Product, ShippingMethod } from "@/lib/types";
 import { PRODUCTS as SEED_PRODUCTS } from "@/data/products";
 import { BRANDS as SEED_BRANDS } from "@/data/brands";
 import { PROMO_CODES as SEED_PROMO_CODES, SHIPPING_METHODS as SEED_SHIPPING_METHODS } from "@/data/commerce";
@@ -19,6 +19,7 @@ interface DbShape {
   shippingMethods: ShippingMethod[];
   orders: Order[];
   accessCodes: AccessCode[];
+  homeContent: HomeContent;
 }
 
 function seedDb(): DbShape {
@@ -38,6 +39,7 @@ function seedDb(): DbShape {
         revoked: false,
       },
     ],
+    homeContent: {},
   };
 }
 
@@ -76,6 +78,7 @@ async function readDb(): Promise<DbShape> {
     shippingMethods: parsed.shippingMethods ?? SEED_SHIPPING_METHODS,
     orders: parsed.orders ?? [],
     accessCodes: parsed.accessCodes ?? [],
+    homeContent: parsed.homeContent ?? {},
   };
 }
 
@@ -251,5 +254,17 @@ export async function revokeAccessCode(id: string): Promise<void> {
   const db = await readDb();
   const found = db.accessCodes.find((a) => a.id === id);
   if (found) found.revoked = true;
+  await writeDb(db);
+}
+
+// ------------------------------------------------------------ Home content
+
+export async function getHomeContent(): Promise<HomeContent> {
+  return (await readDb()).homeContent;
+}
+
+export async function saveHomeContent(content: HomeContent): Promise<void> {
+  const db = await readDb();
+  db.homeContent = content;
   await writeDb(db);
 }

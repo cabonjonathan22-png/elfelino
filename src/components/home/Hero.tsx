@@ -1,11 +1,12 @@
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { CoverMedia } from "@/components/ui/CoverMedia";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 
-export function Hero() {
+export function Hero({ image }: { image?: string }) {
   return (
     <section className="relative flex min-h-[92vh] items-end overflow-hidden bg-ink">
-      <PlaceholderVisual
+      <CoverMedia
+        image={image}
         tone="dark"
         swatch={2}
         ratio="wide"

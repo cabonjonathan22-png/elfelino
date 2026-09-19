@@ -17,6 +17,15 @@ export interface Brand {
   story: string[];
   values: BrandValue[];
   heroLabel: string;
+  /** Cover photo (Vercel Blob URL) shown on the homepage and the brand page. */
+  coverImage?: string;
+}
+
+/** Editable photos for the homepage sections, managed from the admin. */
+export interface HomeContent {
+  heroImage?: string;
+  storyImage?: string;
+  athleteImage?: string;
 }
 
 export type ProductCategory =

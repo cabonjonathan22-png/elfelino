@@ -1,5 +1,5 @@
 import type { Brand } from "@/lib/types";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { CoverMedia } from "@/components/ui/CoverMedia";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,8 @@ export function BrandHero({ brand, tone, swatch, headline }: BrandHeroProps) {
 
   return (
     <section className={cn("relative flex min-h-[80vh] items-end overflow-hidden", dark ? "bg-ink" : "bg-smoke")}>
-      <PlaceholderVisual
+      <CoverMedia
+        image={brand.coverImage}
         tone={tone}
         swatch={swatch}
         monogram={brand.shortName[0]}

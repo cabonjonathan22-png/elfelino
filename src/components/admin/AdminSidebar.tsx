@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { label: "Tableau de bord", href: "/admin" },
+  { label: "Page d'accueil", href: "/admin/homepage" },
   { label: "Produits", href: "/admin/products" },
   { label: "Commandes", href: "/admin/orders" },
   { label: "Codes Promo", href: "/admin/promo-codes" },

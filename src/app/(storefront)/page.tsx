@@ -6,20 +6,30 @@ import { AthleteSpotlight } from "@/components/home/AthleteSpotlight";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { CoverMedia } from "@/components/ui/CoverMedia";
+import { getHomeContent } from "@/lib/db";
 
-export default function Home() {
+export default async function Home() {
+  const homeContent = await getHomeContent();
+
   return (
     <>
-      <Hero />
-      <AthleteSpotlight />
+      <Hero image={homeContent.heroImage} />
+      <AthleteSpotlight image={homeContent.athleteImage} />
       <Marquee />
       <BrandShowcase />
       <DropSection />
 
       <section className="py-20 sm:py-28">
         <Container className="grid items-center gap-12 lg:grid-cols-2">
-          <PlaceholderVisual tone="dark" swatch={6} monogram="M" ratio="wide" className="order-2 lg:order-1" />
+          <CoverMedia
+            image={homeContent.storyImage}
+            tone="dark"
+            swatch={6}
+            monogram="M"
+            ratio="wide"
+            className="order-2 lg:order-1"
+          />
           <div className="order-1 lg:order-2">
             <SectionHeading eyebrow="La Maison" title="Une même exigence, trois écritures distinctes" />
             <p className="mt-6 max-w-lg text-sm leading-relaxed text-ash sm:text-base">

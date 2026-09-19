@@ -1,4 +1,4 @@
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { CoverMedia } from "@/components/ui/CoverMedia";
 import { Container } from "@/components/ui/Container";
 
 const STATS = [
@@ -10,11 +10,12 @@ const STATS = [
 
 // Real record, cross-checked against BoxRec / Boxerlist / BoxeNet.fr —
 // not the mock data used elsewhere on this site.
-export function AthleteSpotlight() {
+export function AthleteSpotlight({ image }: { image?: string }) {
   return (
     <section className="bg-ink py-20 text-white sm:py-28">
       <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        <PlaceholderVisual
+        <CoverMedia
+          image={image}
           tone="dark"
           swatch={5}
           monogram="EB"

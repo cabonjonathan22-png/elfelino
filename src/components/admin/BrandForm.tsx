@@ -3,9 +3,11 @@
 import { useState } from "react";
 import type { Brand, BrandValue } from "@/lib/types";
 import { saveBrandAction } from "@/app/admin/(protected)/brands/actions";
+import { CoverImageUploader } from "@/components/admin/CoverImageUploader";
 
 export function BrandForm({ brand }: { brand: Brand }) {
   const [values, setValues] = useState<BrandValue[]>(brand.values);
+  const [coverImage, setCoverImage] = useState<string | null>(brand.coverImage ?? null);
   const [saved, setSaved] = useState(false);
 
   function updateValue(index: number, patch: Partial<BrandValue>) {
@@ -28,6 +30,14 @@ export function BrandForm({ brand }: { brand: Brand }) {
     >
       <input type="hidden" name="slug" value={brand.slug} />
       <input type="hidden" name="valuesJson" value={JSON.stringify(values)} />
+      <input type="hidden" name="coverImage" value={coverImage ?? ""} />
+
+      <CoverImageUploader
+        label="Image de couverture"
+        value={coverImage}
+        onChange={setCoverImage}
+        folder={`brands/${brand.slug}`}
+      />
 
       <section className="grid gap-5 sm:grid-cols-2">
         <Field label="Nom affiché" name="name" defaultValue={brand.name} />

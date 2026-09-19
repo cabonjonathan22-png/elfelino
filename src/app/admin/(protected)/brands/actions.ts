@@ -20,6 +20,8 @@ export async function saveBrandAction(formData: FormData): Promise<void> {
     .map((line) => line.trim())
     .filter(Boolean);
 
+  const coverImageRaw = String(formData.get("coverImage") || "").trim();
+
   const brand: Brand = {
     slug,
     name: String(formData.get("name") || ""),
@@ -30,6 +32,7 @@ export async function saveBrandAction(formData: FormData): Promise<void> {
     heroLabel: String(formData.get("heroLabel") || ""),
     story,
     values: values.filter((v) => v.title.trim()),
+    coverImage: coverImageRaw || undefined,
   };
 
   await saveBrand(brand);
