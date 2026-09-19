@@ -7,7 +7,7 @@ import { QuantitySelector } from "@/components/ui/QuantitySelector";
 import { StockBadge } from "@/components/ui/StockBadge";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/lib/cart-context";
-import { totalStock } from "@/data/products";
+import { totalStock } from "@/lib/utils";
 
 export function AddToCartForm({ product }: { product: Product }) {
   const { addItem } = useCart();

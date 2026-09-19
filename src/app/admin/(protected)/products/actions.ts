@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { saveProduct, deleteProduct } from "@/lib/db";
+import { saveProduct, deleteProduct, deleteProducts } from "@/lib/db";
 import type { Product, ProductCategory, ProductSizeStock } from "@/lib/types";
 
 function slugify(input: string): string {
@@ -33,6 +33,14 @@ export async function saveProductAction(formData: FormData): Promise<void> {
 
   const compareAtPriceRaw = String(formData.get("compareAtPrice") || "").trim();
 
+  let images: string[] = [];
+  try {
+    images = JSON.parse(String(formData.get("imagesJson") || "[]")) as string[];
+  } catch {
+    images = [];
+  }
+  const videoRaw = String(formData.get("video") || "").trim();
+
   const product: Product = {
     id,
     slug,
@@ -50,6 +58,8 @@ export async function saveProductAction(formData: FormData): Promise<void> {
     isLimited: formData.get("isLimited") === "on",
     tone: (String(formData.get("tone") || "light") as Product["tone"]),
     swatch: Number(formData.get("swatch")) || 1,
+    images,
+    video: videoRaw || undefined,
   };
 
   await saveProduct(product);
@@ -62,4 +72,9 @@ export async function deleteProductAction(formData: FormData): Promise<void> {
   await deleteProduct(id);
   revalidatePath("/", "layout");
   redirect("/admin/products");
+}
+
+export async function bulkDeleteProductsAction(ids: string[]): Promise<void> {
+  await deleteProducts(ids);
+  revalidatePath("/", "layout");
 }

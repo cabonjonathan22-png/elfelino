@@ -119,6 +119,13 @@ export async function deleteProduct(id: string): Promise<void> {
   await writeDb(db);
 }
 
+export async function deleteProducts(ids: string[]): Promise<void> {
+  const db = await readDb();
+  const idSet = new Set(ids);
+  db.products = db.products.filter((p) => !idSet.has(p.id));
+  await writeDb(db);
+}
+
 // ------------------------------------------------------------------ Brands
 
 export async function getBrands(): Promise<Brand[]> {

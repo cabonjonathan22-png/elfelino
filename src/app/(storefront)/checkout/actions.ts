@@ -32,6 +32,7 @@ export async function placeOrderAction(input: PlaceOrderInput): Promise<{ id: st
       price: item.price,
       swatch: item.swatch,
       tone: item.tone,
+      image: item.image,
     })),
     shippingMethodId: input.shippingMethodId,
     shippingCost: input.shippingCost,

@@ -1,14 +1,26 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getProducts, getBrands } from "@/lib/db";
-import { totalStock, formatPrice } from "@/lib/utils";
-import { PRODUCT_CATEGORY_LABELS } from "@/lib/types";
+import { totalStock } from "@/lib/utils";
+import { ProductsTable, type ProductRow } from "@/components/admin/ProductsTable";
 
 export const metadata: Metadata = { title: "Produits" };
 
 export default async function AdminProductsPage() {
   const [products, brands] = await Promise.all([getProducts(), getBrands()]);
   const brandName = (slug: string) => brands.find((b) => b.slug === slug)?.name;
+
+  const rows: ProductRow[] = products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    brandName: brandName(product.brand),
+    category: product.category,
+    price: product.price,
+    stock: totalStock(product),
+    isNew: product.isNew,
+    isLimited: product.isLimited,
+    thumbnail: product.images?.[0],
+  }));
 
   return (
     <div className="space-y-6">
@@ -25,60 +37,7 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      <div className="overflow-x-auto border border-line bg-white">
-        <table className="w-full min-w-[720px] text-sm">
-          <thead>
-            <tr className="border-b border-line text-left text-[11px] uppercase tracking-[0.12em] text-ash">
-              <th className="px-4 py-3 font-medium">Produit</th>
-              <th className="px-4 py-3 font-medium">Marque</th>
-              <th className="px-4 py-3 font-medium">Catégorie</th>
-              <th className="px-4 py-3 font-medium">Prix</th>
-              <th className="px-4 py-3 font-medium">Stock</th>
-              <th className="px-4 py-3 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {products.map((product) => {
-              const stock = totalStock(product);
-              return (
-                <tr key={product.id}>
-                  <td className="px-4 py-3">
-                    <p className="font-medium">{product.name}</p>
-                    <div className="mt-1 flex gap-1.5">
-                      {product.isNew && (
-                        <span className="bg-smoke px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
-                          Nouveau
-                        </span>
-                      )}
-                      {product.isLimited && (
-                        <span className="bg-ink px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-white">
-                          Limité
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-ash">{brandName(product.brand)}</td>
-                  <td className="px-4 py-3 text-ash">{PRODUCT_CATEGORY_LABELS[product.category]}</td>
-                  <td className="px-4 py-3">{formatPrice(product.price)}</td>
-                  <td className="px-4 py-3">
-                    <span className={stock === 0 ? "text-red-600" : stock <= 5 ? "text-ink" : "text-ash"}>
-                      {stock === 0 ? "Épuisé" : stock}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/admin/products/${product.id}`}
-                      className="text-[11px] font-medium uppercase tracking-[0.14em] underline"
-                    >
-                      Modifier
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ProductsTable products={rows} />
     </div>
   );
 }

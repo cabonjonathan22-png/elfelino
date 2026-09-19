@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/types";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
-import { formatPrice } from "@/lib/utils";
-import { totalStock } from "@/data/products";
+import { ProductMedia } from "@/components/ui/ProductMedia";
+import { formatPrice, totalStock } from "@/lib/utils";
 
 const BRAND_LABEL: Record<Product["brand"], string> = {
   "el-felino": "El Felino",
@@ -16,7 +15,8 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
       <div className="relative overflow-hidden bg-smoke">
-        <PlaceholderVisual
+        <ProductMedia
+          image={product.images?.[0]}
           tone={product.tone}
           swatch={product.swatch}
           label={BRAND_LABEL[product.brand]}

@@ -1,4 +1,4 @@
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { ProductMedia } from "@/components/ui/ProductMedia";
 import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
@@ -16,7 +16,14 @@ export function OrderSummary({ shippingCost }: { shippingCost: number }) {
         {items.map((item) => (
           <div key={`${item.slug}-${item.size}`} className="flex gap-3">
             <div className="relative h-16 w-14 shrink-0 overflow-hidden">
-              <PlaceholderVisual tone={item.tone} swatch={item.swatch} ratio="portrait" className="h-full w-full" />
+              <ProductMedia
+                image={item.image}
+                tone={item.tone}
+                swatch={item.swatch}
+                ratio="portrait"
+                className="h-full w-full"
+                sizes="56px"
+              />
               <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[10px] text-white">
                 {item.quantity}
               </span>

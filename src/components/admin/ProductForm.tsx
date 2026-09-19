@@ -10,6 +10,7 @@ import {
   type ProductSizeStock,
 } from "@/lib/types";
 import { saveProductAction, deleteProductAction } from "@/app/admin/(protected)/products/actions";
+import { MediaUploader } from "@/components/admin/MediaUploader";
 
 const CATEGORY_ENTRIES = Object.entries(PRODUCT_CATEGORY_LABELS) as [ProductCategory, string][];
 
@@ -18,6 +19,8 @@ export function ProductForm({ product, brands }: { product?: Product; brands: Br
   const [sizes, setSizes] = useState<ProductSizeStock[]>(
     product?.sizes ?? [{ size: "", stock: 0 }]
   );
+  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  const [video, setVideo] = useState<string | null>(product?.video ?? null);
 
   function updateSize(index: number, patch: Partial<ProductSizeStock>) {
     setSizes((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
@@ -36,6 +39,8 @@ export function ProductForm({ product, brands }: { product?: Product; brands: Br
     <form action={saveProductAction} className="space-y-8">
       <input type="hidden" name="id" value={product?.id ?? ""} />
       <input type="hidden" name="sizesJson" value={JSON.stringify(sizes)} />
+      <input type="hidden" name="imagesJson" value={JSON.stringify(images)} />
+      <input type="hidden" name="video" value={video ?? ""} />
 
       <section className="grid gap-5 sm:grid-cols-2">
         <Field label="Nom *" name="name" defaultValue={product?.name} required />
@@ -82,6 +87,15 @@ export function ProductForm({ product, brands }: { product?: Product; brands: Br
           type="number"
           step="0.01"
           defaultValue={product?.compareAtPrice}
+        />
+      </section>
+
+      <section>
+        <MediaUploader
+          images={images}
+          onImagesChange={setImages}
+          video={video}
+          onVideoChange={setVideo}
         />
       </section>
 

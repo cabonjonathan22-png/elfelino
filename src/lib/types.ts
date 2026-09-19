@@ -66,6 +66,10 @@ export interface Product {
   isLimited?: boolean;
   tone: "light" | "dark";
   swatch: number;
+  /** Uploaded product photos (Vercel Blob URLs). First is the primary image. */
+  images?: string[];
+  /** Uploaded product video (Vercel Blob URL). */
+  video?: string;
 }
 
 export interface CartItem {
@@ -78,6 +82,7 @@ export interface CartItem {
   quantity: number;
   swatch: number;
   tone: "light" | "dark";
+  image?: string;
 }
 
 export interface PromoCode {
@@ -113,6 +118,7 @@ export interface OrderItem {
   price: number;
   swatch: number;
   tone: "light" | "dark";
+  image?: string;
 }
 
 export interface OrderCustomer {

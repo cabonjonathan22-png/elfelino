@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
+import { ProductMedia } from "@/components/ui/ProductMedia";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/utils";
@@ -23,7 +23,14 @@ export function CartItemRow({ item, onNavigate }: { item: CartItem; onNavigate?:
         onClick={onNavigate}
         className="block h-24 w-20 shrink-0 overflow-hidden"
       >
-        <PlaceholderVisual tone={item.tone} swatch={item.swatch} ratio="portrait" className="h-full w-full" />
+        <ProductMedia
+          image={item.image}
+          tone={item.tone}
+          swatch={item.swatch}
+          ratio="portrait"
+          className="h-full w-full"
+          sizes="80px"
+        />
       </Link>
 
       <div className="flex flex-1 flex-col">
