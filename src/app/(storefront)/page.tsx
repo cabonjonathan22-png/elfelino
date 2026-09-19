@@ -2,6 +2,7 @@ import { Hero } from "@/components/home/Hero";
 import { Marquee } from "@/components/home/Marquee";
 import { BrandShowcase } from "@/components/home/BrandShowcase";
 import { DropSection } from "@/components/home/DropSection";
+import { AthleteSpotlight } from "@/components/home/AthleteSpotlight";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <AthleteSpotlight />
       <Marquee />
       <BrandShowcase />
       <DropSection />
