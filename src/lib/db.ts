@@ -55,7 +55,14 @@ async function readDb(): Promise<DbShape> {
 
   if (!result) {
     const seeded = seedDb();
-    await writeDb(seeded);
+    try {
+      await writeDb(seeded);
+    } catch {
+      // Best-effort persistence. Build-time static generation runs many
+      // page renders in parallel and may not have durable write access —
+      // fall back to the in-memory seed so rendering still succeeds. A
+      // real request at runtime will persist it on the next write.
+    }
     return seeded;
   }
 
