@@ -26,6 +26,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
+      // Product media lives in a dedicated *public* Blob store — separate
+      // from the private store used for the JSON data — since a private
+      // store's browser-upload endpoint doesn't allow the cross-origin PUT
+      // that client uploads rely on.
+      token: process.env.MEDIA_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async () => ({
         allowedContentTypes: ALLOWED_CONTENT_TYPES,
         addRandomSuffix: true,
